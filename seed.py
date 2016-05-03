@@ -45,7 +45,7 @@ def load_movies():
 
     for row in open("seed_data/u.item"):
         row = row.rstrip()
-        movie_id, title, released_at, imdb_url, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ = row.split("|")
+        movie_id, title, released_at, video_release_date, imdb_url, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ = row.split("|")
 
         released_str = released_at
 
@@ -54,8 +54,9 @@ def load_movies():
         else:
             released_at = None
 
-        for title in row:
-            title = title.replace('(', '')[:-6]
+        print title
+        title = title.replace('(', '')[:-6]
+        print title
 
         movie = Movie(movie_id=movie_id, 
                       title=title, 
@@ -76,12 +77,12 @@ def load_ratings():
 
     for row in open("seed_data/u.data"):
         row = row.rstrip()
-        rating_id, movie_id, user_id, score = row.split("\t")
+        user_id, movie_id, score, timestamp = row.split("\t")
 
-        rating = Rating(rating_id=rating_id,
-                        movie_id=movie_id, 
+        rating = Rating(movie_id=movie_id, 
                         user_id=user_id, 
-                        score=score)
+                        score=score,
+                        timestamp=timestamp)
 
         db.session.add(rating)
         
