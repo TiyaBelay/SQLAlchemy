@@ -36,7 +36,6 @@ def user_list():
 def user_login():
     """Allow user to login"""
 
-    #flash user "you are now signed up" OR "you are now logged in"
     return render_template("login.html")
 
 @app.route("/handle-login", methods=['POST'])
@@ -46,12 +45,10 @@ def handle_login():
     email = request.form['email']
     password = request.form['password']
 
-    user = User(email=email, password=password) #To be used for adding new users
+    user = User(email=email, password=password) #This is being used for adding new users (see line 68)
 
     try: 
         email_user = User.query.filter_by(email=email).one()
-        # password_user = User.query.filter_by(password=password).one()
-        # print password_user    
     except orm.exc.NoResultFound:
         email_user = None 
         print "Not in db"
@@ -59,9 +56,9 @@ def handle_login():
     if email_user != None: 
         print "CODE REACHED IF STATEMENT"
         if password in email_user.password:
-            # session['current_user'] = email
+            session['email'] = email
             flash("Logged in as %s" % email)
-            return redirect("/")
+            return redirect("/user_details.html")
         else:
             flash("Wrong password!")
             return redirect("/login")
@@ -72,8 +69,19 @@ def handle_login():
         db.session.commit()
         print "USER ADDED TO DB"
 
-    return render_template("login.html")
+    return render_template("/user_details.html")
 
+
+@app.route("/logout")
+def user_logout():
+    """Logout a user"""
+
+    # need to remove the user in session
+    print "CODE REACHED CLEAR SESSION"
+    session.clear()
+
+    flash("You are now logged out! Goodbye")
+    return redirect("/")
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
